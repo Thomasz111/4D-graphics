@@ -79,11 +79,12 @@ class HiperSphere{
 	
 	draw(scene){
 		if(this.r >= this.p.k){
+			scene.remove(this.sphere);
 			var sphereGeom =  new THREE.SphereGeometry( this.realRadius() , 32, 32 );
 			var material = new THREE.MeshBasicMaterial( { color: getRandomColor(), side:THREE.DoubleSide } );		
 
-			var sphere = new THREE.Mesh( sphereGeom, material );
-			scene.add(sphere);
+			this.sphere = new THREE.Mesh( sphereGeom, material );
+			scene.add(this.sphere);
 		}
 	}
 	
