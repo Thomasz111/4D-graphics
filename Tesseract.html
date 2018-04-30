@@ -27,7 +27,7 @@
 <script>
 
 // MAIN
-
+var abba = false;
 
 class FourPoint {
 
@@ -50,28 +50,22 @@ class Tetrahedron {
   }
   
   intersectionPosition(p1,p2){
-  
-    if(p1.k == 0 || p2.k == 0){
-		var x = p1.x;
-		var y = p1.y;
-		var z = p1.z;
-	}else{
-		var x = p1.x-p1.k*( (p2.x - p1.x) / (p2.k - p1.k) );
-		var y = p1.y-p1.k*( (p2.y - p1.y) / (p2.k - p1.k) );
-		var z = p1.z-p1.k*( (p2.z - p1.z) / (p2.k - p1.k) );
-	}
-  
+
+	var x = p1.x-p1.k*( (p2.x - p1.x) / (p2.k - p1.k) );
+	var y = p1.y-p1.k*( (p2.y - p1.y) / (p2.k - p1.k) );
+	var z = p1.z-p1.k*( (p2.z - p1.z) / (p2.k - p1.k) );
+
 	return new THREE.Vector3(x,y,z);
   }
   
   get intersections(){
   	var intersectingPoints = new Array();
-    if (this.points[0].k * this.points[1].k <= 0){intersectingPoints.push(this.intersectionPosition(this.points[0],this.points[1]));}
-    if (this.points[0].k * this.points[2].k <= 0){intersectingPoints.push(this.intersectionPosition(this.points[0],this.points[2]));}
-    if (this.points[0].k * this.points[3].k <= 0){intersectingPoints.push(this.intersectionPosition(this.points[0],this.points[3]));}
-    if (this.points[1].k * this.points[2].k <= 0){intersectingPoints.push(this.intersectionPosition(this.points[1],this.points[2]));}
-    if (this.points[1].k * this.points[3].k <= 0){intersectingPoints.push(this.intersectionPosition(this.points[1],this.points[3]));}
-    if (this.points[2].k * this.points[3].k <= 0){intersectingPoints.push(this.intersectionPosition(this.points[2],this.points[3]));}
+    if (this.points[0].k * this.points[1].k < 0){intersectingPoints.push(this.intersectionPosition(this.points[0],this.points[1]));}
+    if (this.points[0].k * this.points[2].k < 0){intersectingPoints.push(this.intersectionPosition(this.points[0],this.points[2]));}
+    if (this.points[0].k * this.points[3].k < 0){intersectingPoints.push(this.intersectionPosition(this.points[0],this.points[3]));}
+    if (this.points[1].k * this.points[2].k < 0){intersectingPoints.push(this.intersectionPosition(this.points[1],this.points[2]));}
+    if (this.points[1].k * this.points[3].k < 0){intersectingPoints.push(this.intersectionPosition(this.points[1],this.points[3]));}
+    if (this.points[2].k * this.points[3].k < 0){intersectingPoints.push(this.intersectionPosition(this.points[2],this.points[3]));}
     return intersectingPoints;
   }
 }
@@ -127,12 +121,18 @@ class HiperObject {
     }
   }
   
+  addPoints(){
+    this.points = new Array();
+	var i;
+	for (i = 0; i < arguments.length; i++){
+		this.points.push(arguments[i])
+	}
+  }
+  
   move(offset) {
-  	var i, j;
-  	for (i = 0; i < this.tetrahedrons.length; i++){
-		for (j = 0; j < 4; j++){
-			this.tetrahedrons[i].points[j].k += offset;
-		}
+  	var i;
+  	for (i = 0; i < this.points.length; i++){
+		this.points[i].k += offset;
     }
   }
   
@@ -145,32 +145,26 @@ class HiperObject {
   }
   
   rotateZK(alfa){
-	var i, j;
-  	for (i = 0; i < this.tetrahedrons.length; i++){
-		for (j = 0; j < 4; j++){
-			this.tetrahedrons[i].points[j].z = this.tetrahedrons[i].points[j].z * Math.cos(alfa)-this.tetrahedrons[i].points[j].k * Math.sin(alfa);
-			this.tetrahedrons[i].points[j].k = this.tetrahedrons[i].points[j].z * Math.sin(alfa)+this.tetrahedrons[i].points[j].k * Math.cos(alfa);
-		}
+	var i;
+  	for (i = 0; i < this.points.length; i++){
+		this.points[i].z = this.points[i].z * Math.cos(alfa)-this.points[i].k * Math.sin(alfa);
+		this.points[i].k = this.points[i].z * Math.sin(alfa)+this.points[i].k * Math.cos(alfa);
 	}
   }
   
   rotateXK(alfa){
-	var i, j;
-  	for (i = 0; i < this.tetrahedrons.length; i++){
-		for (j = 0; j < 4; j++){
-			this.tetrahedrons[i].points[j].x = this.tetrahedrons[i].points[j].x * Math.cos(alfa)-this.tetrahedrons[i].points[j].k * Math.sin(alfa);
-			this.tetrahedrons[i].points[j].k = this.tetrahedrons[i].points[j].x * Math.sin(alfa)+this.tetrahedrons[i].points[j].k * Math.cos(alfa);
-		}
+	var i;
+  	for (i = 0; i < this.points.length; i++){
+		this.points[i].x = this.points[i].x * Math.cos(alfa)-this.points[i].k * Math.sin(alfa);
+		this.points[i].k = this.points[i].x * Math.sin(alfa)+this.points[i].k * Math.cos(alfa);
 	}
   }
   
   rotateYK(alfa){
-	var i, j;
-  	for (i = 0; i < this.tetrahedrons.length; i++){
-		for (j = 0; j < 4; j++){
-			this.tetrahedrons[i].points[j].y = this.tetrahedrons[i].points[j].y * Math.cos(alfa)-this.tetrahedrons[i].points[j].k * Math.sin(alfa);
-			this.tetrahedrons[i].points[j].k = this.tetrahedrons[i].points[j].y * Math.sin(alfa)+this.tetrahedrons[i].points[j].k * Math.cos(alfa);
-		}
+	var i;
+  	for (i = 0; i < this.points.length; i++){
+		this.points[i].y = this.points[i].y * Math.cos(alfa)-this.points[i].k * Math.sin(alfa);
+		this.points[i].k = this.points[i].y * Math.sin(alfa)+this.points[i].k * Math.cos(alfa);
 	}
   }
   
@@ -182,6 +176,8 @@ class HiperObject {
 				 
 		var intersectingPoints = this.tetrahedrons[i].intersections;
 		var tetrahedron = this.tetrahedrons[i];
+		
+		//if(abba == true){alert(tetrahedron.points[0].k);}
 		
 		//alert(intersectingPoints.length);
 		if(intersectingPoints.length == 0){
@@ -227,44 +223,6 @@ class HiperObject {
 			 scene.add(tetrahedron.triangleMesh2);
 			 tetrahedron.triangleMesh3 = new THREE.Mesh(tetrahedron.triangleGeometry3, triangleMaterial);
 			 scene.add(tetrahedron.triangleMesh3);
-		}
-		if(intersectingPoints.length == 6){
-			 var triangleMaterial = new THREE.MeshBasicMaterial( { color: getRandomColor(), side:THREE.DoubleSide } );
-		
-			 tetrahedron.triangleGeometry2 = new THREE.Geometry();
-			 tetrahedron.triangleGeometry2.vertices.push(tetrahedron.points[0]);
-			 tetrahedron.triangleGeometry2.vertices.push(tetrahedron.points[1]);
-			 tetrahedron.triangleGeometry2.vertices.push(tetrahedron.points[2]);
-			 tetrahedron.triangleGeometry2.faces.push(new THREE.Face3(0, 1, 2));
-			 
-			 tetrahedron.triangleGeometry3 = new THREE.Geometry();
-			 tetrahedron.triangleGeometry3.vertices.push(tetrahedron.points[0]);
-			 tetrahedron.triangleGeometry3.vertices.push(tetrahedron.points[2]);
-			 tetrahedron.triangleGeometry3.vertices.push(tetrahedron.points[3]);
-			 tetrahedron.triangleGeometry3.faces.push(new THREE.Face3(0, 1, 2));		
-
-			 tetrahedron.triangleGeometry1 = new THREE.Geometry();
-			 tetrahedron.triangleGeometry1.vertices.push(tetrahedron.points[0]);
-			 tetrahedron.triangleGeometry1.vertices.push(tetrahedron.points[1]);
-			 tetrahedron.triangleGeometry1.vertices.push(tetrahedron.points[2]);
-			 tetrahedron.triangleGeometry1.faces.push(new THREE.Face3(0, 1, 2));
-			 
-			 tetrahedron.triangleGeometry4 = new THREE.Geometry();
-			 tetrahedron.triangleGeometry4.vertices.push(tetrahedron.points[1]);
-			 tetrahedron.triangleGeometry4.vertices.push(tetrahedron.points[2]);
-			 tetrahedron.triangleGeometry4.vertices.push(tetrahedron.points[3]);
-			 tetrahedron.triangleGeometry4.faces.push(new THREE.Face3(0, 1, 2));				 
-
-			 this.clear(tetrahedron);
-
-			 tetrahedron.triangleMesh2 = new THREE.Mesh(tetrahedron.triangleGeometry2, triangleMaterial);
-			 scene.add(tetrahedron.triangleMesh2);
-			 tetrahedron.triangleMesh3 = new THREE.Mesh(tetrahedron.triangleGeometry3, triangleMaterial);
-			 scene.add(tetrahedron.triangleMesh3);
-			 tetrahedron.triangleMesh1 = new THREE.Mesh(tetrahedron.triangleGeometry1, triangleMaterial);
-			 scene.add(tetrahedron.triangleMesh1);
-			 tetrahedron.triangleMesh4 = new THREE.Mesh(tetrahedron.triangleGeometry4, triangleMaterial);
-			 scene.add(tetrahedron.triangleMesh4);
 		}
     }
   }
@@ -332,9 +290,9 @@ function init()
 	
 	//hiperObject = simpleTetrahedron();
 	//hiperObject = fiveCell();
-	//hiperObject = tesseract();
+	hiperObject = tesseract();
 	//hiperObject = sixtyCell();
-	hiperObject = hiperSphere();
+	//hiperObject = hiperSphere();
 	hiperObject.draw(scene);
 	
 }
@@ -353,6 +311,7 @@ function simpleTetrahedron(){
 	const t1 = new Tetrahedron(p1,p2,p3,p4);
 
 	simpleTetrahedron = new HiperObject(t1);
+	simpleTetrahedron.addPoints(p1,p2,p3,p4);
 	return simpleTetrahedron;
 }
 
@@ -370,6 +329,7 @@ function fiveCell(){
 	const t5 = new Tetrahedron(p2,p3,p4,p5);
 	
 	fiveCell = new HiperObject(t1,t2,t3,t4,t5);
+	fiveCell.addPoints(p1,p2,p3,p4,p5);
 	return fiveCell;
 }
 
@@ -401,26 +361,27 @@ function sixtyCell(){
 	const t16 = new Tetrahedron(p5,p6,p7,p8);
 	
 	sixtyCell = new HiperObject(t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15,t16);
+	sixtyCell.addPoints(p1,p2,p3,p4,p5,p6,p7,p8);
 	return sixtyCell;
 }
 
 function tesseract(){
-	const p1 = new FourPoint(0,0,0,-10);	
-	const p2 = new FourPoint(0,0,0,10);	
-	const p3 = new FourPoint(0,0,20,-10);	
-	const p4 = new FourPoint(0,0,20,10);	
-	const p5 = new FourPoint(0,20,0,-10);	
-	const p6 = new FourPoint(0,20,0,10);	
-	const p7 = new FourPoint(0,20,20,-10);	
-	const p8 = new FourPoint(0,20,20,10);	
-	const p9 = new FourPoint(20,0,0,-10);	
-	const p10 = new FourPoint(20,0,0,10);	
-	const p11 = new FourPoint(20,0,20,-10);	
-	const p12 = new FourPoint(20,0,20,10);	
-	const p13 = new FourPoint(20,20,0,-10);	
-	const p14 = new FourPoint(20,20,0,10);	
-	const p15 = new FourPoint(20,20,20,-10);	
-	const p16 = new FourPoint(20,20,20,10);
+	const p1 = new FourPoint(0,0,0,-19);	
+	const p2 = new FourPoint(0,0,0,1);	
+	const p3 = new FourPoint(0,0,20,-19);	
+	const p4 = new FourPoint(0,0,20,1);	
+	const p5 = new FourPoint(0,20,0,-19);	
+	const p6 = new FourPoint(0,20,0,1);	
+	const p7 = new FourPoint(0,20,20,-19);	
+	const p8 = new FourPoint(0,20,20,1);	
+	const p9 = new FourPoint(20,0,0,-19);	
+	const p10 = new FourPoint(20,0,0,1);	
+	const p11 = new FourPoint(20,0,20,-19);	
+	const p12 = new FourPoint(20,0,20,1);	
+	const p13 = new FourPoint(20,20,0,-19);	
+	const p14 = new FourPoint(20,20,0,1);	
+	const p15 = new FourPoint(20,20,20,-19);	
+	const p16 = new FourPoint(20,20,20,1);
 	
 	const t11 = new Tetrahedron(p1,p2,p5,p3);
 	const t12 = new Tetrahedron(p6,p8,p5,p2);
@@ -471,6 +432,7 @@ function tesseract(){
 	const t85 = new Tetrahedron(p4,p16,p10,p6);
 	
 	tesseract = new HiperObject(t11,t12,t13,t14,t15,t21,t22,t23,t24,t25,t31,t32,t33,t34,t35,t41,t42,t43,t44,t45,t51,t52,t53,t54,t55,t61,t62,t63,t64,t65,t71,t72,t73,t74,t75,t81,t82,t83,t84,t85);
+	tesseract.addPoints(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16);
 	return tesseract;
 }
 
@@ -485,28 +447,32 @@ function update()
 {
 	if ( keyboard.pressed("z") ) 
 	{ 
-		hiperObject.move(0.1);
+		hiperObject.move(0.2);
 		hiperObject.draw(scene);
 	}
 	if ( keyboard.pressed("x") ) 
 	{ 
-		hiperObject.move(-0.1);
+		hiperObject.move(-0.2);
 		hiperObject.draw(scene);
 	}
 	if ( keyboard.pressed("c") ) 
 	{ 
-		hiperObject.rotateXK(0.001);
+		hiperObject.rotateXK(0.01);
 		hiperObject.draw(scene);
 	}
 	if ( keyboard.pressed("v") ) 
 	{ 
-		hiperObject.rotateYK(0.001);
+		hiperObject.rotateYK(0.01);
 		hiperObject.draw(scene);
 	}
 	if ( keyboard.pressed("b") ) 
 	{ 
-		hiperObject.rotateZK(0.001);
+		hiperObject.rotateZK(0.01);
 		hiperObject.draw(scene);
+	}
+	if ( keyboard.pressed("s") ) 
+	{ 
+		abba = true;
 	}
 	
 	controls.update();
