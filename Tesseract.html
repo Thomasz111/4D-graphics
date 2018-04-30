@@ -50,9 +50,18 @@ class Tetrahedron {
   }
   
   intersectionPosition(p1,p2){
-	return new THREE.Vector3( p1.x-p1.k*( (p2.x - p1.x) / (p2.k - p1.k) ),  
-							p1.y-p1.k*( (p2.y - p1.y) / (p2.k - p1.k) ), 
-							p1.z-p1.k*( (p2.z - p1.z) / (p2.k - p1.k) ));
+  
+    if(p1.k == 0 || p2.k == 0){
+		var x = p1.x;
+		var y = p1.y;
+		var z = p1.z;
+	}else{
+		var x = p1.x-p1.k*( (p2.x - p1.x) / (p2.k - p1.k) );
+		var y = p1.y-p1.k*( (p2.y - p1.y) / (p2.k - p1.k) );
+		var z = p1.z-p1.k*( (p2.z - p1.z) / (p2.k - p1.k) );
+	}
+  
+	return new THREE.Vector3(x,y,z);
   }
   
   get intersections(){
@@ -93,15 +102,18 @@ class HiperSphere{
 	}
 	
 	rotateZK(alfa){
-
+			this.p.z = this.p.z * Math.cos(alfa)-this.p.k * Math.sin(alfa);
+			this.p.k = this.p.z * Math.sin(alfa)+this.p.k * Math.cos(alfa);
 	  }
 	  
 	  rotateXK(alfa){
-
+			this.p.x = this.p.x * Math.cos(alfa)-this.p.k * Math.sin(alfa);
+			this.p.k = this.p.x * Math.sin(alfa)+this.p.k * Math.cos(alfa);
 	  }
 	  
 	  rotateYK(alfa){
-
+		this.p.y = this.p.y * Math.cos(alfa)-this.p.k * Math.sin(alfa);
+		this.p.k = this.p.y * Math.sin(alfa)+this.p.k * Math.cos(alfa);
 	  }
 }
 
@@ -128,6 +140,8 @@ class HiperObject {
 	 scene.remove(tetrahedron.triangleMesh);
 	 scene.remove(tetrahedron.triangleMesh2);
 	 scene.remove(tetrahedron.triangleMesh3);
+	 scene.remove(tetrahedron.triangleMesh1);
+	 scene.remove(tetrahedron.triangleMesh4);
   }
   
   rotateZK(alfa){
@@ -168,6 +182,8 @@ class HiperObject {
 				 
 		var intersectingPoints = this.tetrahedrons[i].intersections;
 		var tetrahedron = this.tetrahedrons[i];
+		
+		//alert(intersectingPoints.length);
 		if(intersectingPoints.length == 0){
 			this.clear(tetrahedron);
 		}
@@ -189,7 +205,7 @@ class HiperObject {
 		}
 		if(intersectingPoints.length == 4){
 			
-			 //0,1,2; 0,2,3
+			 //0,1,2; 1,2,3
 			 var triangleMaterial = new THREE.MeshBasicMaterial( { color: getRandomColor(), side:THREE.DoubleSide } );
 		
 			 
@@ -211,6 +227,44 @@ class HiperObject {
 			 scene.add(tetrahedron.triangleMesh2);
 			 tetrahedron.triangleMesh3 = new THREE.Mesh(tetrahedron.triangleGeometry3, triangleMaterial);
 			 scene.add(tetrahedron.triangleMesh3);
+		}
+		if(intersectingPoints.length == 6){
+			 var triangleMaterial = new THREE.MeshBasicMaterial( { color: getRandomColor(), side:THREE.DoubleSide } );
+		
+			 tetrahedron.triangleGeometry2 = new THREE.Geometry();
+			 tetrahedron.triangleGeometry2.vertices.push(tetrahedron.points[0]);
+			 tetrahedron.triangleGeometry2.vertices.push(tetrahedron.points[1]);
+			 tetrahedron.triangleGeometry2.vertices.push(tetrahedron.points[2]);
+			 tetrahedron.triangleGeometry2.faces.push(new THREE.Face3(0, 1, 2));
+			 
+			 tetrahedron.triangleGeometry3 = new THREE.Geometry();
+			 tetrahedron.triangleGeometry3.vertices.push(tetrahedron.points[0]);
+			 tetrahedron.triangleGeometry3.vertices.push(tetrahedron.points[2]);
+			 tetrahedron.triangleGeometry3.vertices.push(tetrahedron.points[3]);
+			 tetrahedron.triangleGeometry3.faces.push(new THREE.Face3(0, 1, 2));		
+
+			 tetrahedron.triangleGeometry1 = new THREE.Geometry();
+			 tetrahedron.triangleGeometry1.vertices.push(tetrahedron.points[0]);
+			 tetrahedron.triangleGeometry1.vertices.push(tetrahedron.points[1]);
+			 tetrahedron.triangleGeometry1.vertices.push(tetrahedron.points[2]);
+			 tetrahedron.triangleGeometry1.faces.push(new THREE.Face3(0, 1, 2));
+			 
+			 tetrahedron.triangleGeometry4 = new THREE.Geometry();
+			 tetrahedron.triangleGeometry4.vertices.push(tetrahedron.points[1]);
+			 tetrahedron.triangleGeometry4.vertices.push(tetrahedron.points[2]);
+			 tetrahedron.triangleGeometry4.vertices.push(tetrahedron.points[3]);
+			 tetrahedron.triangleGeometry4.faces.push(new THREE.Face3(0, 1, 2));				 
+
+			 this.clear(tetrahedron);
+
+			 tetrahedron.triangleMesh2 = new THREE.Mesh(tetrahedron.triangleGeometry2, triangleMaterial);
+			 scene.add(tetrahedron.triangleMesh2);
+			 tetrahedron.triangleMesh3 = new THREE.Mesh(tetrahedron.triangleGeometry3, triangleMaterial);
+			 scene.add(tetrahedron.triangleMesh3);
+			 tetrahedron.triangleMesh1 = new THREE.Mesh(tetrahedron.triangleGeometry1, triangleMaterial);
+			 scene.add(tetrahedron.triangleMesh1);
+			 tetrahedron.triangleMesh4 = new THREE.Mesh(tetrahedron.triangleGeometry4, triangleMaterial);
+			 scene.add(tetrahedron.triangleMesh4);
 		}
     }
   }
@@ -290,23 +344,11 @@ function hiperSphere(){
 	return hiperSphere;
 }
 
-function simpleTetrahedron2(){
-	const p1 = new FourPoint(-13,22,4,0);
+function simpleTetrahedron(){
+	const p1 = new FourPoint(-13,22,4,1);
 	const p2 = new FourPoint(-1,11,-17,0);
 	const p3 = new FourPoint(21,2,12,0);
-	const p4 = new FourPoint(45,8,44,0);
-
-	const t1 = new Tetrahedron(p1,p2,p3,p4);
-
-	simpleTetrahedron2 = new HiperObject(t1);
-	return simpleTetrahedron;
-}
-
-function simpleTetrahedron(){
-	const p1 = new FourPoint(-13,22,4,-4);
-	const p2 = new FourPoint(-1,11,-17,4);
-	const p3 = new FourPoint(21,2,12,-1);
-	const p4 = new FourPoint(45,8,44,4);
+	const p4 = new FourPoint(45,8,44,-1);
 
 	const t1 = new Tetrahedron(p1,p2,p3,p4);
 
