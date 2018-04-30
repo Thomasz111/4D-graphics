@@ -78,8 +78,8 @@ class HiperSphere{
 	}
 	
 	draw(scene){
-		if(this.r >= this.p.k){
-			scene.remove(this.sphere);
+		scene.remove(this.sphere);
+		if(this.r >= Math.abs(this.p.k)){
 			var sphereGeom =  new THREE.SphereGeometry( this.realRadius() , 32, 32 );
 			var material = new THREE.MeshBasicMaterial( { color: getRandomColor(), side:THREE.DoubleSide } );		
 
@@ -288,6 +288,18 @@ function init()
 function hiperSphere(){
 	hiperSphere = new HiperSphere(10,10,10,10,20);
 	return hiperSphere;
+}
+
+function simpleTetrahedron2(){
+	const p1 = new FourPoint(-13,22,4,0);
+	const p2 = new FourPoint(-1,11,-17,0);
+	const p3 = new FourPoint(21,2,12,0);
+	const p4 = new FourPoint(45,8,44,0);
+
+	const t1 = new Tetrahedron(p1,p2,p3,p4);
+
+	simpleTetrahedron2 = new HiperObject(t1);
+	return simpleTetrahedron;
 }
 
 function simpleTetrahedron(){
