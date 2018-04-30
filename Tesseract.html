@@ -71,8 +71,8 @@ class Tetrahedron {
 }
 
 class HiperSphere{
-	constructor(x,y,z,k,r) {
-      this.p = new FourPoint(x,y,z,k);
+	constructor(p,r) {
+      this.p = p;
 	  this.r = r;
     }
 	
@@ -96,38 +96,27 @@ class HiperSphere{
 	}
 	
 	rotateZK(alfa){
-			this.p.z = this.p.z * Math.cos(alfa)-this.p.k * Math.sin(alfa);
-			this.p.k = this.p.z * Math.sin(alfa)+this.p.k * Math.cos(alfa);
-	  }
-	  
-	  rotateXK(alfa){
-			this.p.x = this.p.x * Math.cos(alfa)-this.p.k * Math.sin(alfa);
-			this.p.k = this.p.x * Math.sin(alfa)+this.p.k * Math.cos(alfa);
-	  }
-	  
-	  rotateYK(alfa){
+		this.p.z = this.p.z * Math.cos(alfa)-this.p.k * Math.sin(alfa);
+		this.p.k = this.p.z * Math.sin(alfa)+this.p.k * Math.cos(alfa);
+	}
+
+	rotateXK(alfa){
+		this.p.x = this.p.x * Math.cos(alfa)-this.p.k * Math.sin(alfa);
+		this.p.k = this.p.x * Math.sin(alfa)+this.p.k * Math.cos(alfa);
+	}
+
+	rotateYK(alfa){
 		this.p.y = this.p.y * Math.cos(alfa)-this.p.k * Math.sin(alfa);
 		this.p.k = this.p.y * Math.sin(alfa)+this.p.k * Math.cos(alfa);
-	  }
+	}
 }
 
 class HiperObject {
   
-  constructor() {
-    this.tetrahedrons = new Array();
-    var i;
-    for (i = 0; i < arguments.length; i++) {
-        this.tetrahedrons.push(arguments[i]);
-    }
-  }
-  
-  addPoints(){
-    this.points = new Array();
-	var i;
-	for (i = 0; i < arguments.length; i++){
-		this.points.push(arguments[i])
+	constructor(tetrahedrons, points) {
+		this.tetrahedrons = tetrahedrons;
+		this.points = points;
 	}
-  }
   
   move(offset) {
   	var i;
@@ -140,8 +129,7 @@ class HiperObject {
 	 scene.remove(tetrahedron.triangleMesh);
 	 scene.remove(tetrahedron.triangleMesh2);
 	 scene.remove(tetrahedron.triangleMesh3);
-	 scene.remove(tetrahedron.triangleMesh1);
-	 scene.remove(tetrahedron.triangleMesh4);
+
   }
   
   rotateZK(alfa){
@@ -172,14 +160,9 @@ class HiperObject {
     var i;
   	for (i = 0; i < this.tetrahedrons.length; i++){
 	
-		//var triangleMaterial = new THREE.MeshLambertMaterial( { opacity:0.5, color: 0xffffff, transparent:true, side:THREE.DoubleSide } );
-				 
 		var intersectingPoints = this.tetrahedrons[i].intersections;
 		var tetrahedron = this.tetrahedrons[i];
-		
-		//if(abba == true){alert(tetrahedron.points[0].k);}
-		
-		//alert(intersectingPoints.length);
+
 		if(intersectingPoints.length == 0){
 			this.clear(tetrahedron);
 		}
@@ -200,11 +183,9 @@ class HiperObject {
 			 scene.add(tetrahedron.triangleMesh);
 		}
 		if(intersectingPoints.length == 4){
-			
-			 //0,1,2; 1,2,3
+
 			 var triangleMaterial = new THREE.MeshBasicMaterial( { color: getRandomColor(), side:THREE.DoubleSide } );
 		
-			 
 			 tetrahedron.triangleGeometry2 = new THREE.Geometry();
 			 tetrahedron.triangleGeometry2.vertices.push(intersectingPoints[0]);
 			 tetrahedron.triangleGeometry2.vertices.push(intersectingPoints[1]);
@@ -298,42 +279,56 @@ function init()
 }
 
 function hiperSphere(){
-	hiperSphere = new HiperSphere(10,10,10,10,20);
+	var p = new FourPoint(10,10,10,10)
+	hiperSphere = new HiperSphere(p,20);
 	return hiperSphere;
 }
 
 function simpleTetrahedron(){
+	var tetrahedrons = [];
+	var points = [];
 	const p1 = new FourPoint(-13,22,4,1);
 	const p2 = new FourPoint(-1,11,-17,0);
 	const p3 = new FourPoint(21,2,12,0);
 	const p4 = new FourPoint(45,8,44,-1);
+	points.push(p1);
+	points.push(p2);
+	points.push(p3);
+	points.push(p4);
 
-	const t1 = new Tetrahedron(p1,p2,p3,p4);
+	tetrahedrons.push(new Tetrahedron(p1,p2,p3,p4));
 
-	simpleTetrahedron = new HiperObject(t1);
-	simpleTetrahedron.addPoints(p1,p2,p3,p4);
+	simpleTetrahedron = new HiperObject(tetrahedrons, points);
 	return simpleTetrahedron;
 }
 
 function fiveCell(){
+	var tetrahedrons = [];
+	var points = [];
 	const p1 = new FourPoint(20,0,0,0);
 	const p2 = new FourPoint(0,20,0,0);
 	const p3 = new FourPoint(0,0,20,0);
 	const p4 = new FourPoint(0,0,0,20);
 	const p5 = new FourPoint(15,15,15,15);
+	points.push(p1);
+	points.push(p2);
+	points.push(p3);
+	points.push(p4);
+	points.push(p5);
 	
-	const t1 = new Tetrahedron(p1,p2,p3,p4);
-	const t2 = new Tetrahedron(p1,p2,p3,p5);
-	const t3 = new Tetrahedron(p1,p2,p4,p5);
-	const t4 = new Tetrahedron(p1,p3,p4,p5);
-	const t5 = new Tetrahedron(p2,p3,p4,p5);
+	tetrahedrons.push(new Tetrahedron(p1,p2,p3,p4));
+	tetrahedrons.push(new Tetrahedron(p1,p2,p3,p5));
+	tetrahedrons.push(new Tetrahedron(p1,p2,p4,p5));
+	tetrahedrons.push(new Tetrahedron(p1,p3,p4,p5));
+	tetrahedrons.push(new Tetrahedron(p2,p3,p4,p5));
 	
-	fiveCell = new HiperObject(t1,t2,t3,t4,t5);
-	fiveCell.addPoints(p1,p2,p3,p4,p5);
+	fiveCell = new HiperObject(tetrahedrons, points);
 	return fiveCell;
 }
 
 function sixtyCell(){
+	var tetrahedrons = [];
+	var points = [];
 	const p1 = new FourPoint(20,0,0,0);
 	const p2 = new FourPoint(0,20,0,0);
 	const p3 = new FourPoint(0,0,20,0);
@@ -342,97 +337,121 @@ function sixtyCell(){
 	const p6 = new FourPoint(0,-20,0,0);
 	const p7 = new FourPoint(0,0,-20,0);
 	const p8 = new FourPoint(0,0,0,-20);
+	points.push(p1);
+	points.push(p2);
+	points.push(p3);
+	points.push(p4);
+	points.push(p5);
+	points.push(p6);
+	points.push(p7);
+	points.push(p8);
 	
-	const t1 = new Tetrahedron(p1,p2,p3,p4);
-	const t2 = new Tetrahedron(p1,p2,p3,p8);
-	const t3 = new Tetrahedron(p1,p2,p7,p4);
-	const t4 = new Tetrahedron(p1,p6,p3,p4);
-	const t5 = new Tetrahedron(p5,p2,p3,p4);
-	const t6 = new Tetrahedron(p5,p6,p3,p4);
-	const t7 = new Tetrahedron(p1,p6,p7,p4);
-	const t8 = new Tetrahedron(p1,p2,p7,p8);
-	const t9 = new Tetrahedron(p1,p6,p3,p8);
-	const t10 = new Tetrahedron(p5,p2,p7,p4);
-	const t11 = new Tetrahedron(p5,p2,p3,p8);
-	const t12 = new Tetrahedron(p5,p6,p7,p4);
-	const t13 = new Tetrahedron(p5,p6,p3,p8);
-	const t14 = new Tetrahedron(p5,p2,p7,p8);
-	const t15 = new Tetrahedron(p1,p6,p7,p8);
-	const t16 = new Tetrahedron(p5,p6,p7,p8);
+	tetrahedrons.push(new Tetrahedron(p1,p2,p3,p4));
+	tetrahedrons.push(new Tetrahedron(p1,p2,p3,p8));
+	tetrahedrons.push(new Tetrahedron(p1,p2,p7,p4));
+	tetrahedrons.push(new Tetrahedron(p1,p6,p3,p4));
+	tetrahedrons.push(new Tetrahedron(p5,p2,p3,p4));
+	tetrahedrons.push(new Tetrahedron(p5,p6,p3,p4));
+	tetrahedrons.push(new Tetrahedron(p1,p6,p7,p4));
+	tetrahedrons.push(new Tetrahedron(p1,p2,p7,p8));
+	tetrahedrons.push(new Tetrahedron(p1,p6,p3,p8));
+	tetrahedrons.push(new Tetrahedron(p5,p2,p7,p4));
+	tetrahedrons.push(new Tetrahedron(p5,p2,p3,p8));
+	tetrahedrons.push(new Tetrahedron(p5,p6,p7,p4));
+	tetrahedrons.push(new Tetrahedron(p5,p6,p3,p8));
+	tetrahedrons.push(new Tetrahedron(p5,p2,p7,p8));
+	tetrahedrons.push(new Tetrahedron(p1,p6,p7,p8));
+	tetrahedrons.push(new Tetrahedron(p5,p6,p7,p8));
 	
-	sixtyCell = new HiperObject(t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15,t16);
-	sixtyCell.addPoints(p1,p2,p3,p4,p5,p6,p7,p8);
+	sixtyCell = new HiperObject(tetrahedrons, points);
 	return sixtyCell;
 }
 
 function tesseract(){
-	const p1 = new FourPoint(0,0,0,-19);	
-	const p2 = new FourPoint(0,0,0,1);	
-	const p3 = new FourPoint(0,0,20,-19);	
-	const p4 = new FourPoint(0,0,20,1);	
-	const p5 = new FourPoint(0,20,0,-19);	
-	const p6 = new FourPoint(0,20,0,1);	
-	const p7 = new FourPoint(0,20,20,-19);	
-	const p8 = new FourPoint(0,20,20,1);	
-	const p9 = new FourPoint(20,0,0,-19);	
-	const p10 = new FourPoint(20,0,0,1);	
-	const p11 = new FourPoint(20,0,20,-19);	
-	const p12 = new FourPoint(20,0,20,1);	
-	const p13 = new FourPoint(20,20,0,-19);	
-	const p14 = new FourPoint(20,20,0,1);	
-	const p15 = new FourPoint(20,20,20,-19);	
-	const p16 = new FourPoint(20,20,20,1);
+	var tetrahedrons = [];
+	var points = [];
+	const p1 = new FourPoint(0,0,0,-10);	
+	const p2 = new FourPoint(0,0,0,10);	
+	const p3 = new FourPoint(0,0,20,-10);	
+	const p4 = new FourPoint(0,0,20,10);	
+	const p5 = new FourPoint(0,20,0,-10);	
+	const p6 = new FourPoint(0,20,0,10);	
+	const p7 = new FourPoint(0,20,20,-10);	
+	const p8 = new FourPoint(0,20,20,10);	
+	const p9 = new FourPoint(20,0,0,-10);	
+	const p10 = new FourPoint(20,0,0,10);	
+	const p11 = new FourPoint(20,0,20,-10);	
+	const p12 = new FourPoint(20,0,20,10);	
+	const p13 = new FourPoint(20,20,0,-10);	
+	const p14 = new FourPoint(20,20,0,10);	
+	const p15 = new FourPoint(20,20,20,-10);	
+	const p16 = new FourPoint(20,20,20,10);
+	points.push(p1);
+	points.push(p2);
+	points.push(p3);
+	points.push(p4);
+	points.push(p5);
+	points.push(p6);
+	points.push(p7);
+	points.push(p8);
+	points.push(p9);
+	points.push(p10);
+	points.push(p11);
+	points.push(p12);
+	points.push(p13);
+	points.push(p14);
+	points.push(p15);
+	points.push(p16);
 	
-	const t11 = new Tetrahedron(p1,p2,p5,p3);
-	const t12 = new Tetrahedron(p6,p8,p5,p2);
-	const t13 = new Tetrahedron(p4,p2,p8,p3);
-	const t14 = new Tetrahedron(p7,p8,p5,p3);
-	const t15 = new Tetrahedron(p2,p3,p5,p8);
+	tetrahedrons.push(new Tetrahedron(p1,p2,p5,p3));
+	tetrahedrons.push(new Tetrahedron(p6,p8,p5,p2));
+	tetrahedrons.push(new Tetrahedron(p4,p2,p8,p3));
+	tetrahedrons.push(new Tetrahedron(p7,p8,p5,p3));
+	tetrahedrons.push(new Tetrahedron(p2,p3,p5,p8));
 	
-	const t21 = new Tetrahedron(p9,p10,p13,p11);
-	const t22 = new Tetrahedron(p14,p16,p13,p10);
-	const t23 = new Tetrahedron(p12,p10,p16,p11);
-	const t24 = new Tetrahedron(p15,p16,p13,p11);
-	const t25 = new Tetrahedron(p10,p11,p13,p16);
+	tetrahedrons.push(new Tetrahedron(p9,p10,p13,p11));
+	tetrahedrons.push(new Tetrahedron(p14,p16,p13,p10));
+	tetrahedrons.push(new Tetrahedron(p12,p10,p16,p11));
+	tetrahedrons.push(new Tetrahedron(p15,p16,p13,p11));
+	tetrahedrons.push(new Tetrahedron(p10,p11,p13,p16));
 
-	const t31 = new Tetrahedron(p1,p2,p9,p3);
-	const t32 = new Tetrahedron(p10,p2,p9,p12);
-	const t33 = new Tetrahedron(p4,p2,p3,p12);
-	const t34 = new Tetrahedron(p11,p9,p12,p3);
-	const t35 = new Tetrahedron(p2,p3,p12,p9);
+	tetrahedrons.push(new Tetrahedron(p1,p2,p9,p3));
+	tetrahedrons.push(new Tetrahedron(p10,p2,p9,p12));
+	tetrahedrons.push(new Tetrahedron(p4,p2,p3,p12));
+	tetrahedrons.push(new Tetrahedron(p11,p9,p12,p3));
+	tetrahedrons.push(new Tetrahedron(p2,p3,p12,p9));
+
+	tetrahedrons.push(new Tetrahedron(p5,p6,p13,p7));
+	tetrahedrons.push(new Tetrahedron(p14,p6,p13,p16));
+	tetrahedrons.push(new Tetrahedron(p8,p6,p7,p16));
+	tetrahedrons.push(new Tetrahedron(p15,p13,p16,p7));
+	tetrahedrons.push(new Tetrahedron(p6,p7,p16,p13));
+
+	tetrahedrons.push(new Tetrahedron(p1,p9,p2,p5));
+	tetrahedrons.push(new Tetrahedron(p10,p2,p14,p9));
+	tetrahedrons.push(new Tetrahedron(p6,p2,p14,p5));
+	tetrahedrons.push(new Tetrahedron(p13,p9,p14,p5));
+	tetrahedrons.push(new Tetrahedron(p2,p9,p14,p5));
+
+	tetrahedrons.push(new Tetrahedron(p3,p11,p4,p7));
+	tetrahedrons.push(new Tetrahedron(p12,p4,p16,p11));
+	tetrahedrons.push(new Tetrahedron(p8,p4,p16,p7));
+	tetrahedrons.push(new Tetrahedron(p15,p11,p16,p7));
+	tetrahedrons.push(new Tetrahedron(p4,p11,p16,p7));
+
+	tetrahedrons.push(new Tetrahedron(p1,p9,p3,p5));
+	tetrahedrons.push(new Tetrahedron(p11,p9,p15,p3));
+	tetrahedrons.push(new Tetrahedron(p7,p3,p15,p5));
+	tetrahedrons.push(new Tetrahedron(p13,p15,p9,p5));
+	tetrahedrons.push(new Tetrahedron(p3,p15,p9,p5));
+
+	tetrahedrons.push(new Tetrahedron(p2,p10,p4,p6));
+	tetrahedrons.push(new Tetrahedron(p12,p10,p16,p4));
+	tetrahedrons.push(new Tetrahedron(p8,p4,p16,p6));
+	tetrahedrons.push(new Tetrahedron(p14,p16,p10,p6));
+	tetrahedrons.push(new Tetrahedron(p4,p16,p10,p6));
 	
-	const t41 = new Tetrahedron(p5,p6,p13,p7);
-	const t42 = new Tetrahedron(p14,p6,p13,p16);
-	const t43 = new Tetrahedron(p8,p6,p7,p16);
-	const t44 = new Tetrahedron(p15,p13,p16,p7);
-	const t45 = new Tetrahedron(p6,p7,p16,p13);
-	
-	const t51 = new Tetrahedron(p1,p9,p2,p5);
-	const t52 = new Tetrahedron(p10,p2,p14,p9);
-	const t53 = new Tetrahedron(p6,p2,p14,p5);
-	const t54 = new Tetrahedron(p13,p9,p14,p5);
-	const t55 = new Tetrahedron(p2,p9,p14,p5);
-	
-	const t61 = new Tetrahedron(p3,p11,p4,p7);
-	const t62 = new Tetrahedron(p12,p4,p16,p11);
-	const t63 = new Tetrahedron(p8,p4,p16,p7);
-	const t64 = new Tetrahedron(p15,p11,p16,p7);
-	const t65 = new Tetrahedron(p4,p11,p16,p7);
-	
-	const t71 = new Tetrahedron(p1,p9,p3,p5);
-	const t72 = new Tetrahedron(p11,p9,p15,p3);
-	const t73 = new Tetrahedron(p7,p3,p15,p5);
-	const t74 = new Tetrahedron(p13,p15,p9,p5);
-	const t75 = new Tetrahedron(p3,p15,p9,p5);
-	
-	const t81 = new Tetrahedron(p2,p10,p4,p6);
-	const t82 = new Tetrahedron(p12,p10,p16,p4);
-	const t83 = new Tetrahedron(p8,p4,p16,p6);
-	const t84 = new Tetrahedron(p14,p16,p10,p6);
-	const t85 = new Tetrahedron(p4,p16,p10,p6);
-	
-	tesseract = new HiperObject(t11,t12,t13,t14,t15,t21,t22,t23,t24,t25,t31,t32,t33,t34,t35,t41,t42,t43,t44,t45,t51,t52,t53,t54,t55,t61,t62,t63,t64,t65,t71,t72,t73,t74,t75,t81,t82,t83,t84,t85);
-	tesseract.addPoints(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16);
+	tesseract = new HiperObject(tetrahedrons, points);
 	return tesseract;
 }
 
