@@ -41,12 +41,13 @@ class FourPoint {
 
 class Tetrahedron {
   
-  constructor(p1,p2,p3,p4) {
+  constructor(p1,p2,p3,p4,color) {
 	this.points = [];
     this.points.push(p1);
 	this.points.push(p2);
 	this.points.push(p3);
 	this.points.push(p4);
+	this.color = color;
   }
   
   intersectionPosition(p1,p2){
@@ -168,7 +169,7 @@ class HiperObject {
 		}
 		if(intersectingPoints.length == 3){
 
-			var triangleMaterial = new THREE.MeshBasicMaterial( { color: getRandomColor(), side:THREE.DoubleSide } );
+			var triangleMaterial = new THREE.MeshBasicMaterial( { color: tetrahedron.color, side:THREE.DoubleSide } );
 		
 		
 			 tetrahedron.triangleGeometry = new THREE.Geometry();
@@ -184,7 +185,7 @@ class HiperObject {
 		}
 		if(intersectingPoints.length == 4){
 
-			 var triangleMaterial = new THREE.MeshBasicMaterial( { color: getRandomColor(), side:THREE.DoubleSide } );
+			 var triangleMaterial = new THREE.MeshBasicMaterial( { color: tetrahedron.color, side:THREE.DoubleSide } );
 		
 			 tetrahedron.triangleGeometry2 = new THREE.Geometry();
 			 tetrahedron.triangleGeometry2.vertices.push(intersectingPoints[0]);
@@ -296,7 +297,7 @@ function simpleTetrahedron(){
 	points.push(p3);
 	points.push(p4);
 
-	tetrahedrons.push(new Tetrahedron(p1,p2,p3,p4));
+	tetrahedrons.push(new Tetrahedron(p1,p2,p3,p4,getRandomColor()));
 
 	simpleTetrahedron = new HiperObject(tetrahedrons, points);
 	return simpleTetrahedron;
@@ -316,11 +317,11 @@ function fiveCell(){
 	points.push(p4);
 	points.push(p5);
 	
-	tetrahedrons.push(new Tetrahedron(p1,p2,p3,p4));
-	tetrahedrons.push(new Tetrahedron(p1,p2,p3,p5));
-	tetrahedrons.push(new Tetrahedron(p1,p2,p4,p5));
-	tetrahedrons.push(new Tetrahedron(p1,p3,p4,p5));
-	tetrahedrons.push(new Tetrahedron(p2,p3,p4,p5));
+	tetrahedrons.push(new Tetrahedron(p1,p2,p3,p4,getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p1,p2,p3,p5, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p1,p2,p4,p5, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p1,p3,p4,p5, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p2,p3,p4,p5, getRandomColor()));
 	
 	fiveCell = new HiperObject(tetrahedrons, points);
 	return fiveCell;
@@ -346,22 +347,22 @@ function sixtyCell(){
 	points.push(p7);
 	points.push(p8);
 	
-	tetrahedrons.push(new Tetrahedron(p1,p2,p3,p4));
-	tetrahedrons.push(new Tetrahedron(p1,p2,p3,p8));
-	tetrahedrons.push(new Tetrahedron(p1,p2,p7,p4));
-	tetrahedrons.push(new Tetrahedron(p1,p6,p3,p4));
-	tetrahedrons.push(new Tetrahedron(p5,p2,p3,p4));
-	tetrahedrons.push(new Tetrahedron(p5,p6,p3,p4));
-	tetrahedrons.push(new Tetrahedron(p1,p6,p7,p4));
-	tetrahedrons.push(new Tetrahedron(p1,p2,p7,p8));
-	tetrahedrons.push(new Tetrahedron(p1,p6,p3,p8));
-	tetrahedrons.push(new Tetrahedron(p5,p2,p7,p4));
-	tetrahedrons.push(new Tetrahedron(p5,p2,p3,p8));
-	tetrahedrons.push(new Tetrahedron(p5,p6,p7,p4));
-	tetrahedrons.push(new Tetrahedron(p5,p6,p3,p8));
-	tetrahedrons.push(new Tetrahedron(p5,p2,p7,p8));
-	tetrahedrons.push(new Tetrahedron(p1,p6,p7,p8));
-	tetrahedrons.push(new Tetrahedron(p5,p6,p7,p8));
+	tetrahedrons.push(new Tetrahedron(p1,p2,p3,p4, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p1,p2,p3,p8, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p1,p2,p7,p4, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p1,p6,p3,p4, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p5,p2,p3,p4, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p5,p6,p3,p4, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p1,p6,p7,p4, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p1,p2,p7,p8, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p1,p6,p3,p8, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p5,p2,p7,p4, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p5,p2,p3,p8, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p5,p6,p7,p4, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p5,p6,p3,p8, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p5,p2,p7,p8, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p1,p6,p7,p8, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p5,p6,p7,p8, getRandomColor()));
 	
 	sixtyCell = new HiperObject(tetrahedrons, points);
 	return sixtyCell;
@@ -403,53 +404,53 @@ function tesseract(){
 	points.push(p15);
 	points.push(p16);
 	
-	tetrahedrons.push(new Tetrahedron(p1,p2,p5,p3));
-	tetrahedrons.push(new Tetrahedron(p6,p8,p5,p2));
-	tetrahedrons.push(new Tetrahedron(p4,p2,p8,p3));
-	tetrahedrons.push(new Tetrahedron(p7,p8,p5,p3));
-	tetrahedrons.push(new Tetrahedron(p2,p3,p5,p8));
+	tetrahedrons.push(new Tetrahedron(p1,p2,p5,p3, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p6,p8,p5,p2, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p4,p2,p8,p3, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p7,p8,p5,p3, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p2,p3,p5,p8, getRandomColor()));
 	
-	tetrahedrons.push(new Tetrahedron(p9,p10,p13,p11));
-	tetrahedrons.push(new Tetrahedron(p14,p16,p13,p10));
-	tetrahedrons.push(new Tetrahedron(p12,p10,p16,p11));
-	tetrahedrons.push(new Tetrahedron(p15,p16,p13,p11));
-	tetrahedrons.push(new Tetrahedron(p10,p11,p13,p16));
+	tetrahedrons.push(new Tetrahedron(p9,p10,p13,p11, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p14,p16,p13,p10, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p12,p10,p16,p11, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p15,p16,p13,p11, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p10,p11,p13,p16, getRandomColor()));
 
-	tetrahedrons.push(new Tetrahedron(p1,p2,p9,p3));
-	tetrahedrons.push(new Tetrahedron(p10,p2,p9,p12));
-	tetrahedrons.push(new Tetrahedron(p4,p2,p3,p12));
-	tetrahedrons.push(new Tetrahedron(p11,p9,p12,p3));
-	tetrahedrons.push(new Tetrahedron(p2,p3,p12,p9));
+	tetrahedrons.push(new Tetrahedron(p1,p2,p9,p3, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p10,p2,p9,p12, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p4,p2,p3,p12, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p11,p9,p12,p3, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p2,p3,p12,p9, getRandomColor()));
 
-	tetrahedrons.push(new Tetrahedron(p5,p6,p13,p7));
-	tetrahedrons.push(new Tetrahedron(p14,p6,p13,p16));
-	tetrahedrons.push(new Tetrahedron(p8,p6,p7,p16));
-	tetrahedrons.push(new Tetrahedron(p15,p13,p16,p7));
-	tetrahedrons.push(new Tetrahedron(p6,p7,p16,p13));
+	tetrahedrons.push(new Tetrahedron(p5,p6,p13,p7, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p14,p6,p13,p16, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p8,p6,p7,p16, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p15,p13,p16,p7, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p6,p7,p16,p13, getRandomColor()));
 
-	tetrahedrons.push(new Tetrahedron(p1,p9,p2,p5));
-	tetrahedrons.push(new Tetrahedron(p10,p2,p14,p9));
-	tetrahedrons.push(new Tetrahedron(p6,p2,p14,p5));
-	tetrahedrons.push(new Tetrahedron(p13,p9,p14,p5));
-	tetrahedrons.push(new Tetrahedron(p2,p9,p14,p5));
+	tetrahedrons.push(new Tetrahedron(p1,p9,p2,p5, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p10,p2,p14,p9, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p6,p2,p14,p5, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p13,p9,p14,p5, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p2,p9,p14,p5, getRandomColor()));
 
-	tetrahedrons.push(new Tetrahedron(p3,p11,p4,p7));
-	tetrahedrons.push(new Tetrahedron(p12,p4,p16,p11));
-	tetrahedrons.push(new Tetrahedron(p8,p4,p16,p7));
-	tetrahedrons.push(new Tetrahedron(p15,p11,p16,p7));
-	tetrahedrons.push(new Tetrahedron(p4,p11,p16,p7));
+	tetrahedrons.push(new Tetrahedron(p3,p11,p4,p7, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p12,p4,p16,p11, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p8,p4,p16,p7, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p15,p11,p16,p7, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p4,p11,p16,p7, getRandomColor()));
 
-	tetrahedrons.push(new Tetrahedron(p1,p9,p3,p5));
-	tetrahedrons.push(new Tetrahedron(p11,p9,p15,p3));
-	tetrahedrons.push(new Tetrahedron(p7,p3,p15,p5));
-	tetrahedrons.push(new Tetrahedron(p13,p15,p9,p5));
-	tetrahedrons.push(new Tetrahedron(p3,p15,p9,p5));
+	tetrahedrons.push(new Tetrahedron(p1,p9,p3,p5, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p11,p9,p15,p3, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p7,p3,p15,p5, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p13,p15,p9,p5, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p3,p15,p9,p5, getRandomColor()));
 
-	tetrahedrons.push(new Tetrahedron(p2,p10,p4,p6));
-	tetrahedrons.push(new Tetrahedron(p12,p10,p16,p4));
-	tetrahedrons.push(new Tetrahedron(p8,p4,p16,p6));
-	tetrahedrons.push(new Tetrahedron(p14,p16,p10,p6));
-	tetrahedrons.push(new Tetrahedron(p4,p16,p10,p6));
+	tetrahedrons.push(new Tetrahedron(p2,p10,p4,p6, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p12,p10,p16,p4, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p8,p4,p16,p6, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p14,p16,p10,p6, getRandomColor()));
+	tetrahedrons.push(new Tetrahedron(p4,p16,p10,p6, getRandomColor()));
 	
 	tesseract = new HiperObject(tetrahedrons, points);
 	return tesseract;
